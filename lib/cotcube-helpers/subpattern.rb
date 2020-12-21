@@ -12,7 +12,7 @@ module Cotcube
     #
     #   To extend functionality even more, it is possible to send a group of patterns to, like
     #   sub(2){[:hyper,:mega]}, what will respond truthy to "hy" and "meg" but not to "m" or "hypo"
-    def sub(minimum = 1)
+    def sub(minimum: 1)
       pattern = yield
       case pattern
       when String, Symbol, NilClass

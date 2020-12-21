@@ -29,9 +29,9 @@ class Range
     starting_with_dst = result.first.dst?
     seconds_since_sunday_morning = lambda {|x| x.wday * 86400 + x.hour * 3600 + x.min * 60 + x.sec}
     ranges ||= [
-      61200..143999,  
-      147600..230399,
-      234000..316799,
+       61200..143999,   # Sun 5pm .. Mon 4pm
+      147600..230399,   # Mon 5pm .. Tue 4pm
+      234000..316799,   # ...
       320400..403199,
       406800..489599
     ]
