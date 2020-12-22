@@ -98,4 +98,8 @@ of the keystroke.
 
 Based on https://github.com/grosser/parallel, it is a quite convenient way to parallelize tasks. 
 
+#### Reduce
 
+##### reduce(bars: , to: nil, datelike: :datetime, &block)
+
+Given a series resp. an array of bars (a bar is a set of contract/symbol, datelike, OHLC, volume) respresenting periods of e.g. 1.minute or 15.minutes, these are 'reduced' to an new series of a higher timeframe like hours or days. More target periods might be added in the futures. 

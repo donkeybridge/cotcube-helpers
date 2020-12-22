@@ -12,6 +12,7 @@ module Cotcube
       determine_datelike = lambda {|ary| ary.send(terminators.first)[datelike].send(terminators.last) }
       make_new_bar = lambda do |ary, date = nil|
 	result = {
+          contract: ary.first[:contract],
 	  symbol:   ary.first[:symbol],
           datetime: determine_datelike.call(ary),
 	  day:      ary.first[:day],
