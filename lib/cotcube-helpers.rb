@@ -14,6 +14,7 @@ require_relative 'cotcube-helpers/subpattern.rb'
 require_relative 'cotcube-helpers/parallelize'
 require_relative 'cotcube-helpers/simple_output'
 require_relative 'cotcube-helpers/input'
+require_relative 'cotcube-helpers/reduce'
 
 
 module Cotcube
@@ -21,6 +22,7 @@ module Cotcube
 
     module_function :sub, 
       :parallelize,
+      :reduce,
       :keystroke
 
 
