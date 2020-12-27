@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+# ...
 module Cotcube
+  # ...
   module Helpers
     # sub (should be 'subpattern', but too long) is for use in case / when statements
     #   it returns a lambda, that checks the case'd expression for matching subpattern
     #   based on the the giving minimum. E.g. 'a', 'ab' .. 'abcd' will match sub(1){'abcd'}
-    #   but only 'abc' and 'abcd' will match sub(3){'abcd'}
+    #   but only 'abc' and 'abcd' will match sub(3){'abcd'}.:
     #
     #   The recommended use within evaluating user input, where abbreviation of incoming commands
     #   is desirable (h for hoover and hyper, what will translate to sub(2){'hoover'} and sub(2){hyper})

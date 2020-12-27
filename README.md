@@ -12,7 +12,7 @@ Returns the array compacted--or just nil, when the result is empty?
 
 This is a rather old implementation. Most probably something I developed before I met Array#group\_by.
 
-##### pairwise(&block) / triplewise(&block)
+##### pairwise(&block) / one_by_one(&block)
 
 Yields block on each consecutive pair of the array, hence returning array.size-1 results.
 
@@ -41,17 +41,18 @@ Uses the range of *date alikes* delivered to create an Array of time periods of 
 
 When the step is sub-day, the periods are cleared for DST-changes.
 
-When ranges are nil, only periods are returned that are within the full trading hours. This is
-accomplished by the fact, that Sunday is wday==0. If you want to use ranges, just send a an array
+When ranges are nil, only periods are returned that are within the full trading hours.  
+
+This is implemented with DateTime's propery, that Sunday is wday==0. If you want to use ranges, just send a an array
 of ranges, providing seconds starting at Sunday morning midnight. Here is the default as example:
 
 ```
     ranges ||= [
-       61200..143999,   # Sun 5pm .. Mon 4pm
-      147600..230399,   # Mon 5pm .. Tue 4pm
-      234000..316799,   # ...
-      320400..403199,
-      406800..489599
+       61200...144000,   # Sun 5pm .. Mon 4pm
+      147600...230400,   # Mon 5pm .. Tue 4pm
+      234000...316800,   # ...
+      320400...403300,
+      406800...489600
     ]
 ```
 
@@ -63,18 +64,19 @@ of ranges, providing seconds starting at Sunday morning midnight. Here is the de
 
 ##### sub(minimum: 1) { [:hyper, :mega] }
 
-sub (should be 'subpattern', but too long) is for use in case / when statements
-it returns a lambda, that checks the case'd expression for matching subpattern
-based on the the giving minimum. E.g. 'a', 'ab' .. 'abcd' will match sub(1){'abcd'}
+sub (should be 'subpattern', but too long) is for use in `case / when` statements.  
+It returns a lambda, that checks the *case'd* expression for matching subpatterns
+based on the the giving minimum. E.g. 'a', 'ab' .. 'abcd' .. 'abcd<any_garbage> will match sub(1){'abcd'}
 but only 'abc' and 'abcd' will match sub(3){'abcd'}
 
-The recommended use within evaluating user input, where abbreviation of incoming commands
+It is developed for evaluating user input, where abbreviation of incoming commands
 is desirable (h for hoover and hyper, what will translate to sub(2){'hoover'} and sub(2){hyper})
 
-To extend functionality even more, it is possible to send a group of patterns to, like
-sub(2){[:hyper,:mega]}, what will respond truthy to "hy" and "meg" but not to "m" or "hypo"
+To extend functionality even more, it is possible to send array of patterns like
+sub(2){[:hyper,:mega]}, what will respond truthy to "hy" and "meg" but not to "m" or "hypo" (sadly, you can
+set `:minimum`  only once).
 
-*paired with keystroke() it allows an easy build of an inputhandler*
+*Paired with keystroke() it allows an easy build of an inputhandler.*
 
 #### SimpleOutput
 
@@ -90,7 +92,7 @@ flow like logs, to pause and continue output.
 A version of STDIN.gets, that does not wait for pressing 'enter' but instantly returns the content
 of the keystroke. 
 
-*paired with subpattern it allows an easy build of an inputhandler*
+*Paired with subpattern it allows an easy build of an InputHandler.*
 
 #### Parallelize
 
