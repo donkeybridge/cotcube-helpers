@@ -43,6 +43,7 @@ class Range
     end
 
     # sub-day is checked for DST and filtered along provided ranges
+    # noinspection RubyNilAnalysis
     starting_with_dst = result.first.dst?
 
     # The following lambda is completely misplaces here.
@@ -63,7 +64,6 @@ class Range
     end
     convert_to_sec_since.call('9:00a.m - 5:00p.m.')
 
-    seconds_since_sunday_morning = ->(x) { x.wday * 86_400 + x.hour * 3600 + x.min * 60 + x.sec }
     ranges ||= [
       61_200...144_000,   # Sun 5pm .. Mon 4pm
       147_600...230_400,  # Mon 5pm .. Tue 4pm
@@ -82,8 +82,7 @@ class Range
         time
       end
     end
-    return result if ranges.empty?
 
-    result.select { |x| ranges.map { |r| r.include? seconds_since_sunday_morning.call(x) }.reduce(:|) }
+    result.select_within(ranges: ranges) { |x| x.to_datetime.to_seconds_since_monday_morning }
   end
 end
