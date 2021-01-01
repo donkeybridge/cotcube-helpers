@@ -53,4 +53,25 @@ class Array
       block.call(self[i - 2], self[i - 1], self[i])
     end.compact
   end
+
+  # selects all elements from array that fit in given ranges.
+  # if :attr is given, selects all elements, where elem[:attr] fit
+  # raises if elem.first[attr].nil?
+  def select_within(ranges:, attr: nil, &block)
+    unless attr.nil? || first[attr]
+      raise ArgumentError,
+            "At least first element of Array '#{first}' does not contain attr '#{attr}'!"
+    end
+    raise ArgumentError, 'Ranges should be an Array or, more precisely, respond_to :map' unless ranges.respond_to? :map
+    raise ArgumentError, 'Each range in :ranges should respond to .include!' unless ranges.map do |x|
+                                                                                      x.respond_to? :include?
+                                                                                    end.reduce(:&)
+
+    select do |el|
+      value = attr.nil? ? el : el[attr]
+      ranges.map do |range|
+        range.include?(block.nil? ? value : block.call(value))
+      end.reduce(:|)
+    end
+  end
 end
