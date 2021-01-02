@@ -33,54 +33,55 @@ class Range
       return (starting.to_date..ending.to_date).to_a.map{|x| x.to_datetime}
     else
 
-    ##### The following is the actual big magic line, as it creates the raw target array:
-    #
-    result = (starting.to_time.to_i..ending.to_time.to_i).step(step).to_a.map { |x| timezone.at(x) }
-    #
-    # ###################<3##
+      ##### The following is the actual big magic line, as it creates the raw target array:
+      #
+      result = (starting.to_time.to_i..ending.to_time.to_i).step(step).to_a.map { |x| timezone.at(x) }
+      #
+      # ###################<3##
 
 
-    # sub-day is checked for DST and filtered along provided ranges
-    # noinspection RubyNilAnalysis
-    starting_with_dst = result.first.dst?
+      # sub-day is checked for DST and filtered along provided ranges
+      # noinspection RubyNilAnalysis
+      starting_with_dst = result.first.dst?
 
-    # The following lambda is completely misplaces here.
-    # It should probably relocated to Cotcube::Bardata
-    # NOTE: In this current version 12 belongs to it succeeding hour
-    #       i.e. 12am is right before 1am and 12pm right before 1pm
-    convert_to_sec_since = lambda do |clocking|
-      from_src, to_src = clocking.split(' - ')
-      regex = /^(?<hour>\d+):(?<minute>\d+)(?<morning>[pa]).?m.*/
+      # The following lambda is completely misplaces here.
+      # It should probably relocated to Cotcube::Bardata
+      # NOTE: In this current version 12 belongs to it succeeding hour
+      #       i.e. 12am is right before 1am and 12pm right before 1pm
+      convert_to_sec_since = lambda do |clocking|
+        from_src, to_src = clocking.split(' - ')
+        regex = /^(?<hour>\d+):(?<minute>\d+)(?<morning>[pa]).?m.*/
 
-      from = from_src.match(regex)
-      to   = to_src.match(regex)
+        from = from_src.match(regex)
+        to   = to_src.match(regex)
 
-      from_i = from[:hour].to_i * 3600 + from[:minute].to_i * 60 + (from[:morning] == 'a' ? 2 : 1) * 12 * 3600
-      to_i = to[:hour].to_i * 3600 + to[:minute].to_i * 60 + (to[:morning] == 'a' ? 2 : 3) * 12 * 3600
+        from_i = from[:hour].to_i * 3600 + from[:minute].to_i * 60 + (from[:morning] == 'a' ? 2 : 1) * 12 * 3600
+        to_i = to[:hour].to_i * 3600 + to[:minute].to_i * 60 + (to[:morning] == 'a' ? 2 : 3) * 12 * 3600
 
-      (0...5).to_a.map { |i| [from_i + i * 24 * 3600, to_i + i * 24 * 3600] }
-    end
-    convert_to_sec_since.call('9:00a.m - 5:00p.m.')
-
-    ranges ||= [
-      61_200...144_000,   # Sun 5pm .. Mon 4pm
-      147_600...230_400,  # Mon 5pm .. Tue 4pm
-      234_000...316_800,  # ...
-      320_400...403_200,
-      406_800...489_600
-    ]
-
-    # if there was a change towards daylight saving time, subtract 1 hour, otherwise add 1 hour
-    result.map! do |time|
-      if (not starting_with_dst) && time.dst?
-        time - 3600
-      elsif starting_with_dst && (not time.dst?)
-        time + 3600
-      else
-        time
+        (0...5).to_a.map { |i| [from_i + i * 24 * 3600, to_i + i * 24 * 3600] }
       end
-    end
+      convert_to_sec_since.call('9:00a.m - 5:00p.m.')
 
-    result.select_within(ranges: ranges) { |x| x.to_datetime.to_seconds_since_monday_morning }
+      ranges ||= [
+        61_200...144_000,   # Sun 5pm .. Mon 4pm
+        147_600...230_400,  # Mon 5pm .. Tue 4pm
+        234_000...316_800,  # ...
+        320_400...403_200,
+        406_800...489_600
+      ]
+
+      # if there was a change towards daylight saving time, subtract 1 hour, otherwise add 1 hour
+      result.map! do |time|
+        if (not starting_with_dst) && time.dst?
+          time - 3600
+        elsif starting_with_dst && (not time.dst?)
+          time + 3600
+        else
+          time
+        end
+      end
+
+      result.select_within(ranges: ranges) { |x| x.to_datetime.to_seconds_since_monday_morning }
+    end
   end
 end
