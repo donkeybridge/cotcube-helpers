@@ -1,3 +1,6 @@
+## 0.1.5.1 (January 02, 2021)
+  - Hotfixing parallelize
+
 ## 0.1.5 (January 02, 2021)
   - applied new datetime helper to Range#to_time_intervals
   - added new DateTime extension, containing 'to_seconds_since_sunday_morning'
