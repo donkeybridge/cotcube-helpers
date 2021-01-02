@@ -1,3 +1,6 @@
+## 1.5.1.2 (January 02, 2021)
+  - hotfix problem in Range.to_time_intervals
+
 ## 0.1.5.1 (January 02, 2021)
   - Hotfixing parallelize
 
