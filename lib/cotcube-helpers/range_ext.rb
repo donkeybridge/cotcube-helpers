@@ -7,6 +7,7 @@ class Range
       raise ArgumentError,
             ":step must be a 'ActiveSupport::Duration', like '15.minutes', but '#{step}' is a '#{step.class}'"
     end
+    raise ArgumentError, "Sorry, currently supporting only 15.minutes, 1.hour, 1.day as :step" unless [15.minutes, 60.minutes, 1.hour, 1.day].include? step
 
     valid_classes = [ActiveSupport::TimeWithZone, Time, Date, DateTime]
     unless timezone.is_a? ActiveSupport::TimeZone
@@ -26,21 +27,18 @@ class Range
             ":self.end seems not to be proper time value: #{ending} is a #{ending.class}"
     end
 
+    # here sub-day and super-day need to be distinguished, as they react differently to daylight time
+    # for super-day, just return an array containing all calendar days
+    if step.to_i >= 1.day
+      return (starting.to_date..ending.to_date).to_a.map{|x| x.to_datetime}
+    else
+
     ##### The following is the actual big magic line, as it creates the raw target array:
     #
     result = (starting.to_time.to_i..ending.to_time.to_i).step(step).to_a.map { |x| timezone.at(x) }
     #
     # ###################<3##
 
-    # with step.to_i >= 86400 we are risking stuff like 25.hours to return bogus
-    # also notice: When using this with swaps, you will loose 1 hour (#f**k_it)
-    #
-    # eventually, for dailies and above, return M-F default, return S-S when forced by empty ranges
-    if step.to_i >= 86_400
-      return result.select do |x|
-               (not ranges.nil?) && ranges.empty? ? true : (not [6, 0].include?(x.wday))
-             end
-    end
 
     # sub-day is checked for DST and filtered along provided ranges
     # noinspection RubyNilAnalysis
