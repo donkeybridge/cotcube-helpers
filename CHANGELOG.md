@@ -1,3 +1,6 @@
+## 1.5.1.3 (January 02, 2021)
+  - hotfixing the hotfix (hello CI tools, c ya coming)
+
 ## 1.5.1.2 (January 02, 2021)
   - hotfix problem in Range.to_time_intervals
 
