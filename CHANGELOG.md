@@ -1,3 +1,8 @@
+## 0.1.5 (January 02, 2021)
+  - applied new datetime helper to Range#to_time_intervals
+  - added new DateTime extension, containing 'to_seconds_since_sunday_morning'
+  - added #select_within to array_ext
+
 ## 0.1.4 (December 27, 2020)
   - applied cops
   - added README for reduce; minor changes
