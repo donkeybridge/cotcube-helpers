@@ -74,4 +74,24 @@ class Array
       end.reduce(:|)
     end
   end
+
+  def select_right_by(inclusive: false, exclusive: false, initial: [], &block)
+    # unless range.is_a? Range and
+    #       (range.begin.nil? or range.begin.is_a?(Integer)) and
+    #       (range.end.nil? or range.end.is_a?(Integer))
+    #  raise ArgumentError, ":range, if given, must be a range of ( nil|Integer..nil|Integer), got '#{range}'"
+    # end
+
+    raise ArgumentError, 'No block given.' unless block.is_a? Proc
+
+    inclusive = true unless exclusive
+    if inclusive && exclusive
+      raise ArgumentError,
+            "Either :inclusive or :exclusive must remain falsey, got '#{inclusive}' and '#{exclusive}'"
+    end
+
+    index = find_index { |obj| block.call(obj) }
+
+    self[((inclusive ? index : index + 1)..)]
+  end
 end
