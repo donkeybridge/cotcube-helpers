@@ -1,3 +1,7 @@
+## 0.1.6 (January 15, 2021)
+  - removing :ranges from Range#select_within
+  - Added Array#select_right_by
+
 ## 0.1.5.4 (January 02, 2021)
 
 
