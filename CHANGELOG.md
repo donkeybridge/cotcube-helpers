@@ -1,3 +1,6 @@
+## 0.1.7.1 (January 17, 2021)
+  - bugfix
+
 ## 0.1.7 (January 17, 2021)
   - added new method 'simple_series_stats'
 
