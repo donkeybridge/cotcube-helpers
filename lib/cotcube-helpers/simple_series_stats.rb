@@ -5,7 +5,7 @@ module Cotcube
   module Helpers
     # if given a block, :ind of base is set by block.call()
     # dim reduces the sample size by top n% and least n%, so dim of 0.5 would remove 100% of the sample
-    def simple_series_stats(base:, ind: nil, dim: 0, format: '%5.2f', print: true, &block)
+    def simple_series_stats(base:, ind: nil, dim: 0, format: '% 6.2f', prefix: '', print: true, &block)
       raise ArgumentError, 'Need :ind of type integer' if base.first.is_a?(Array) and not ind.is_a?(Integer)
       raise ArgumentError, 'Need :ind to evaluate base' if base.first.is_a?(Hash) and ind.nil?
 
@@ -37,15 +37,16 @@ module Cotcube
       result[:upper]  =  worker[ (result[:size] * 3 / 4).round ]
       result[:max]    =  worker.last
 
-      result[:output] = result.
+      output = result.
         reject{|k,_| k == :size}.
         map{|k,v| { type: k, value: v, output: "#{k}: #{format(format, v)}".colorize(k==:avg ? :light_yellow : :white) } }.
         sort_by{|x| x[:value]}.
         map{|x| x[:output]}
-      output = "[" + 
-               " size: #{format '%6d', result[:size]} | ".light_white + 
-               output.join(' |  ') + 
-               " ]"
+      result[:output] = "#{format '%20s',(prefix.empty? ? '' : (prefix + ': '))}" + 
+                        "[" +
+                        " size: #{format '%6d', result[:size]} | ".light_white +
+                        output.join(' |  ') +
+                        " ]"
 
       puts result[:output] if print
       result
