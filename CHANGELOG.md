@@ -1,3 +1,6 @@
+## 0.1.7 (January 17, 2021)
+  - added new method 'simple_series_stats'
+
 ## 0.1.6 (January 15, 2021)
   - removing :ranges from Range#select_within
   - Added Array#select_right_by
