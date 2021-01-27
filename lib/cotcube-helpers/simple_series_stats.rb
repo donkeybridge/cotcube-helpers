@@ -23,9 +23,7 @@ module Cotcube
         sort
       unless dim.zero?
         reductor = (base.size * dim).round
-        puts reductor
         worker = worker[reductor..base.size - reductor]
-        puts worker.size
       end
       result = {}
 
