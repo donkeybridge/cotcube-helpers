@@ -2,6 +2,10 @@
 
 # Monkey patching the Ruby Core class Range
 class Range
+  def mod(first, last = 0)
+    exclude_end? ? ((self.begin + first)...(self.end + last)) : ((self.begin + first)..(self.begin + last))
+  end
+
   def to_time_intervals(step:,
                         timezone: Time.find_zone('America/Chicago'),
                         # ranges: nil,
