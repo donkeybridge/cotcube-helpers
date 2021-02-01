@@ -1,3 +1,8 @@
+## 0.1.7.2 (February 01, 2021)
+  - adding #deep_freeze to Enumerable
+  - range_ext: added #mod to modify an (actually) immutable range
+  - simple_series_stats: minor fix
+
 ## 0.1.7.1 (January 17, 2021)
   - bugfix
 
