@@ -1,3 +1,6 @@
+## 0.1.7.3 (March 13, 2021)
+  - array_ext: pairwise and triplewise now support saving result in latter members []=
+
 ## 0.1.7.2 (February 01, 2021)
   - adding #deep_freeze to Enumerable
   - range_ext: added #mod to modify an (actually) immutable range
