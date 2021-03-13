@@ -29,28 +29,32 @@ class Array
   # This method iterates over an Array by calling the given block on all 2 consecutive elements
   # it returns a Array of self.size - 1
   #
-  def pairwise(&block)
+  def pairwise(ret=nil, &block)
     raise ArgumentError, 'Array.one_by_one needs an arity of 2 (i.e. |a, b|)' unless block.arity == 2
+    raise ArgumentError, 'Each element of Array should respond to []=, at least the last one fails.' unless self.last.respond_to?(:[]=)
     return [] if size <= 1
 
-    each_with_index.map do |_, i|
+    each_index.map do |i|
       next if i.zero?
 
-      block.call(self[i - 1], self[i])
+      r = block.call(self[i - 1], self[i])
+      ret.nil?  ? r : (self[i][ret] = r)
     end.compact
   end
 
   alias one_by_one pairwise
 
   # same as pairwise, but with arity of three
-  def triplewise(&block)
+  def triplewise(ret=nil, &block)
     raise ArgumentError, 'Array.triplewise needs an arity of 3 (i.e. |a, b, c|)' unless block.arity == 3
+    raise ArgumentError, 'Each element of Array should respond to []=, at least the last one fails. unless self.last.respond_to?(:[]=)
     return [] if size <= 2
 
-    each_with_index.map do |_, i|
+    each_index.map do |i|
       next if i < 2
 
-      block.call(self[i - 2], self[i - 1], self[i])
+      r = block.call(self[i - 2], self[i - 1], self[i])
+      ret.nil?  ? r : (self[i][ret] = r)
     end.compact
   end
 
