@@ -1,3 +1,6 @@
+## 0.1.7.4 (March 13, 2021)
+  - hotfix on 0.1.7.3
+
 ## 0.1.7.3 (March 13, 2021)
   - array_ext: pairwise and triplewise now support saving result in latter members []=
 
