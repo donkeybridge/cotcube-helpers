@@ -47,7 +47,7 @@ class Array
   # same as pairwise, but with arity of three
   def triplewise(ret=nil, &block)
     raise ArgumentError, 'Array.triplewise needs an arity of 3 (i.e. |a, b, c|)' unless block.arity == 3
-    raise ArgumentError, 'Each element of Array should respond to []=, at least the last one fails. unless self.last.respond_to?(:[]=)
+    raise ArgumentError, 'Each element of Array should respond to []=, at least the last one fails.' unless self.last.respond_to?(:[]=)
     return [] if size <= 2
 
     each_index.map do |i|
@@ -65,37 +65,37 @@ class Array
     unless attr.nil? || first[attr]
       raise ArgumentError,
             "At least first element of Array '#{first}' does not contain attr '#{attr}'!"
-    end
-    raise ArgumentError, 'Ranges should be an Array or, more precisely, respond_to :map' unless ranges.respond_to? :map
-    raise ArgumentError, 'Each range in :ranges should respond to .include!' unless ranges.map do |x|
-                                                                                      x.respond_to? :include?
-                                                                                    end.reduce(:&)
+  end
+  raise ArgumentError, 'Ranges should be an Array or, more precisely, respond_to :map' unless ranges.respond_to? :map
+  raise ArgumentError, 'Each range in :ranges should respond to .include!' unless ranges.map do |x|
+    x.respond_to? :include?
+  end.reduce(:&)
 
-    select do |el|
-      value = attr.nil? ? el : el[attr]
-      ranges.map do |range|
-        range.include?(block.nil? ? value : block.call(value))
-      end.reduce(:|)
-    end
+  select do |el|
+    value = attr.nil? ? el : el[attr]
+    ranges.map do |range|
+      range.include?(block.nil? ? value : block.call(value))
+    end.reduce(:|)
+  end
+end
+
+def select_right_by(inclusive: false, exclusive: false, initial: [], &block)
+  # unless range.is_a? Range and
+  #       (range.begin.nil? or range.begin.is_a?(Integer)) and
+  #       (range.end.nil? or range.end.is_a?(Integer))
+  #  raise ArgumentError, ":range, if given, must be a range of ( nil|Integer..nil|Integer), got '#{range}'"
+  # end
+
+  raise ArgumentError, 'No block given.' unless block.is_a? Proc
+
+  inclusive = true unless exclusive
+  if inclusive && exclusive
+    raise ArgumentError,
+      "Either :inclusive or :exclusive must remain falsey, got '#{inclusive}' and '#{exclusive}'"
   end
 
-  def select_right_by(inclusive: false, exclusive: false, initial: [], &block)
-    # unless range.is_a? Range and
-    #       (range.begin.nil? or range.begin.is_a?(Integer)) and
-    #       (range.end.nil? or range.end.is_a?(Integer))
-    #  raise ArgumentError, ":range, if given, must be a range of ( nil|Integer..nil|Integer), got '#{range}'"
-    # end
+  index = find_index { |obj| block.call(obj) }
 
-    raise ArgumentError, 'No block given.' unless block.is_a? Proc
-
-    inclusive = true unless exclusive
-    if inclusive && exclusive
-      raise ArgumentError,
-            "Either :inclusive or :exclusive must remain falsey, got '#{inclusive}' and '#{exclusive}'"
-    end
-
-    index = find_index { |obj| block.call(obj) }
-
-    self[((inclusive ? index : index + 1)..)]
-  end
+  self[((inclusive ? index : index + 1)..)]
+end
 end
