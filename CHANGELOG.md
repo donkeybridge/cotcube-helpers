@@ -1,3 +1,6 @@
+## 0.1.8 (April 18, 2021)
+  - datetime_ext: Date.cw provides a range of (Date..Date) representing the according calendar week
+
 ## 0.1.7.4 (March 13, 2021)
   - hotfix on 0.1.7.3
 
