@@ -19,6 +19,9 @@ require_relative 'cotcube-helpers/simple_output'
 require_relative 'cotcube-helpers/simple_series_stats'
 require_relative 'cotcube-helpers/input'
 require_relative 'cotcube-helpers/reduce'
+require_relative 'cotcube-helpers/constants'
+require_relative 'cotcube-helpers/symbols'
+require_relative 'cotcube-heleprs/init'
 
 module Cotcube
   module Helpers
@@ -26,7 +29,9 @@ module Cotcube
                     :parallelize,
                     :reduce,
                     :simple_series_stats,
-                    :keystroke
+                    :keystroke,
+                    :symbols,
+                    :init
 
     # please not that module_functions of source provided in private files must be published there
   end
