@@ -1,3 +1,7 @@
+## 0.1.9.1 (May 07, 2021)
+  - moved 'get_id_set' to Cotcube::Helpers
+  - minor fix to suppress some warning during build
+
 ## 0.1.9 (May 07, 2021)
   - added constants, init and symbols to helpers
 
