@@ -26,9 +26,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activesupport'
+  spec.add_dependency 'activesupport', '~> 6'
+  spec.add_dependency 'colorize',      '~> 0.8'
 
-  spec.add_development_dependency 'rake'
+
+  spec.add_development_dependency 'rake', '~> 13'
   spec.add_development_dependency 'rspec', '~>3.6'
   spec.add_development_dependency 'yard', '~>0.9'
 end
