@@ -21,7 +21,8 @@ require_relative 'cotcube-helpers/input'
 require_relative 'cotcube-helpers/reduce'
 require_relative 'cotcube-helpers/constants'
 require_relative 'cotcube-helpers/symbols'
-require_relative 'cotcube-heleprs/init'
+require_relative 'cotcube-helpers/init'
+require_relative 'cotcube-helpers/get_id_set'
 
 module Cotcube
   module Helpers
@@ -31,6 +32,7 @@ module Cotcube
                     :simple_series_stats,
                     :keystroke,
                     :symbols,
+                    :get_id_set,
                     :init
 
     # please not that module_functions of source provided in private files must be published there
