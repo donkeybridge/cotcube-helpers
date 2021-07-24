@@ -1,8 +1,7 @@
-
-zen_string_literal: true
+#frozen_string_literal: true
 
 module Cotcube
-  module SwapSeeker
+  module Helpers
     SYMBOL_EXAMPLES = [
       { id: '13874U', symbol: 'ET', ticksize: 0.25, power: 1.25, months: 'HMUZ', bcf: 1.0, reports: 'LF', format: '8.2f', name: 'S&P 500 MICRO' },
       { id: '209747', symbol: 'NM', ticksize: 0.25, power: 0.5,  monhts: 'HMUZ', bcf: 1.0, reports: 'LF', format: '8.2f', name: 'NASDAQ 100 MICRO' }
