@@ -23,7 +23,7 @@ module Cotcube
              gem_name: nil,
              debug: false)
       gem_name ||= self.ancestors.first.to_s
-      config_file_name = "#{gem_name.down_case}.yml"
+      config_file_name = "#{gem_name.downcase}.yml"
       config_file = config_path + "/#{config_file_name}"
 
       if File.exist?(config_file)
