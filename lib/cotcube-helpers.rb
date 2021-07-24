@@ -17,9 +17,9 @@ require_relative 'cotcube-helpers/subpattern'
 require_relative 'cotcube-helpers/parallelize'
 require_relative 'cotcube-helpers/simple_output'
 require_relative 'cotcube-helpers/simple_series_stats'
+require_relative 'cotcube-helpers/constants'
 require_relative 'cotcube-helpers/input'
 require_relative 'cotcube-helpers/reduce'
-require_relative 'cotcube-helpers/constants'
 require_relative 'cotcube-helpers/symbols'
 require_relative 'cotcube-helpers/init'
 require_relative 'cotcube-helpers/get_id_set'
@@ -28,6 +28,8 @@ module Cotcube
   module Helpers
     module_function :sub,
                     :parallelize,
+                    :config_path,
+                    :config_prefix,
                     :reduce,
                     :simple_series_stats,
                     :keystroke,
