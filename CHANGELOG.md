@@ -1,3 +1,10 @@
+## 0.1.9.2 (July 24, 2021)
+  - added missing module_functions
+  - init: minor fix
+  - datetime_ext: added warning comment / TODO, as switch from to daylight time will produce erroneous results
+  - constants: minor fix (typo)
+  - array_ext: added param to provide a default return value if result is an empty array
+
 ## 0.1.9.1 (May 07, 2021)
   - moved 'get_id_set' to Cotcube::Helpers
   - minor fix to suppress some warning during build
