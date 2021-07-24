@@ -4,6 +4,9 @@
 class DateTime
   # based on the fact that sunday is 'wday 0' plus that trading week starts
   #   sunday 0:00 (as trading starts sunday 5pm CT to fit tokyo monday morning)
+  #
+  # TODO: there is a slight flaw, that 1 sunday per year is 1 hour too short and another is 1 hour too long
+  #
   def to_seconds_since_sunday_morning
     wday * 86_400 + hour * 3600 + min * 60 + sec
   end
