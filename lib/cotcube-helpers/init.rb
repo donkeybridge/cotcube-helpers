@@ -23,10 +23,11 @@ module Cotcube
              gem_name: nil,
              debug: false)
       gem_name ||= self.ancestors.first.to_s
-      config_file_name = "#{gem_name.downcase}.yml"
+      config_file_name = "#{gem_name.downcase.split('::').last}.yml"
       config_file = config_path + "/#{config_file_name}"
 
       if File.exist?(config_file)
+        require 'yaml'
         config      = YAML.load(File.read config_file).transform_keys(&:to_sym)
       else
         config      = {} 
