@@ -22,12 +22,12 @@ module Cotcube
         lambda do |x|
           return false if x.nil? || (x.size < minimum)
 
-          return ((pattern =~ /^#{x}/i).nil? ? false : true)
+          return ((pattern =~ /^#{Regexp.escape x}/i).nil? ? false : true)
         end
       when Array
         pattern.map do |x|
           unless [String, Symbol, NilClass].include? x.class
-            raise TypeError, "Unsupported class '#{x.class}' for '#{x}'in pattern '#{pattern}'."
+            raise TypeError, "Unsupported class '#{x.class}' for '#{x}' in pattern '#{pattern}'."
           end
         end
         lambda do |x|
@@ -35,13 +35,13 @@ module Cotcube
             sub = sub.to_s
             return false if x.size < minimum
 
-            result = ((sub =~ /^#{x}/i).nil? ? false : true)
+            result = ((sub =~ /^#{Regexp.escape x}/i).nil? ? false : true)
             return true if result
           end
           return false
         end
       else
-        raise TypeError, "Unsupported class #{pattern.class} in Cotcube::Core::sub"
+        raise TypeError, "Unsupported class #{pattern.class} in Cotcube::Helpers::sub"
       end
     end
   end
