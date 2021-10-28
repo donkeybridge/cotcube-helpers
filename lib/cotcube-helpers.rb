@@ -6,6 +6,7 @@ require 'active_support'
 require 'active_support/core_ext/time'
 require 'active_support/core_ext/numeric'
 require 'parallel'
+require 'csv'
 
 require_relative 'cotcube-helpers/array_ext'
 require_relative 'cotcube-helpers/enum_ext'
@@ -13,6 +14,7 @@ require_relative 'cotcube-helpers/hash_ext'
 require_relative 'cotcube-helpers/range_ext'
 require_relative 'cotcube-helpers/string_ext'
 require_relative 'cotcube-helpers/datetime_ext'
+require_relative 'cotcube-helpers/numeric_ext'
 require_relative 'cotcube-helpers/subpattern'
 require_relative 'cotcube-helpers/parallelize'
 require_relative 'cotcube-helpers/simple_output'
@@ -34,6 +36,7 @@ module Cotcube
                     :simple_series_stats,
                     :keystroke,
                     :symbols,
+                    :micros,
                     :get_id_set,
                     :init
 
