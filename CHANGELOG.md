@@ -1,3 +1,11 @@
+## 0.1.10 (October 28, 2021)
+  - added script cron_ruby_wrapper.sh (linkable as /usr/local/bin/cruw.sh)
+  - added numeric ext .with_delimiter to support printing like 123_456_789.00121
+  - added micros to module
+  - added Helpers.micros to symbols.rb
+  - subpattern: excaping regex pattern to avoid ESC errors
+  - minor change
+
 ## 0.1.9.2 (July 24, 2021)
   - added missing module_functions
   - init: minor fix
