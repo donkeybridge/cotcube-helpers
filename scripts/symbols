@@ -1,0 +1,13 @@
+#!/bin/sh
+
+option=$1
+headers='ID,Symbol,ticksize,power,months,type,factor,reports,format,name'
+
+if [ -z "${option}" ]
+then
+  (echo ${headers} && cat /etc/cotcube/symbols.csv /etc/cotcube/symbols_micros.csv) |  sed 's/,/ , /g' | column -s, -t
+else
+  (echo ${headers} && cat /etc/cotcube/symbols.csv /etc/cotcube/symbols_micros.csv) | grep -i "$option\|reports,format" | sed 's/,/ , /g' | column -s, -t
+fi
+
+
