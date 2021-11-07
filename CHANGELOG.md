@@ -1,3 +1,10 @@
+## 0.2.0 (November 07, 2021)
+  - added module Candlestick_Recognition
+  - added instance_inspect method to 'scan' objects for contents of instance variables
+  - symbols: made selection of symbols more versatile by key
+  - added headers (:ib_symbol, :internal, :exchange, :currency) to symbol headers as well as symbol examples
+  - added scripts/symbols to list (and filter) symbols from command line (put to PATH!)
+
 ## 0.1.10 (October 28, 2021)
   - added script cron_ruby_wrapper.sh (linkable as /usr/local/bin/cruw.sh)
   - added numeric ext .with_delimiter to support printing like 123_456_789.00121
