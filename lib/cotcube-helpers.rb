@@ -26,6 +26,7 @@ require_relative 'cotcube-helpers/reduce'
 require_relative 'cotcube-helpers/symbols'
 require_relative 'cotcube-helpers/init'
 require_relative 'cotcube-helpers/get_id_set'
+require_relative 'cotcube-helpers/recognition'
 
 module Cotcube
   module Helpers
