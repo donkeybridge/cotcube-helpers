@@ -20,10 +20,10 @@ module Cotcube
       end
 
       unless symbol.nil?
-        sym = symbols(symbol: symbol)
+        sym = symbols(symbol: symbol).presence || micros(symbol: symbol)
         if sym.nil? || sym[:id].nil?
           raise ArgumentError,
-                "Could not find match in #{config[:symbols_file]} for given symbol #{symbol}"
+                "Could not find match in #{config[:symbols_file]} or #{config[:micros_file]} for given symbol #{symbol}"
         end
         raise ArgumentError, "Mismatching symbol #{symbol} and given id #{id}" if (not id.nil?) && (sym[:id] != id)
 
@@ -39,6 +39,7 @@ module Cotcube
       end
       raise ArgumentError, 'Need :id, :symbol or valid :contract '
     end
+
   end
 end
 

@@ -33,6 +33,12 @@ module Cotcube
 
     DATE_FMT = '%Y-%m-%d'
 
+    # Simple mapper to get from MONTH to LETTER
+    LETTERS = { "JAN"=> "F", "FEB"=> "G", "MAR"=> "H",
+                "APR"=> "J", "MAY"=> "K", "JUN"=> "M",
+                "JUL"=> "N", "AUG"=> "Q", "SEP"=> "U",
+                "OCT"=> "V", "NOV"=> "X", "DEC"=> "Z" }
+
   end
 end
 
