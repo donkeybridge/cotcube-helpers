@@ -1,3 +1,7 @@
+## 0.2.1.1 (November 10, 2021)
+  - Bump version to 0.2.1.
+  - Bump version to 0.2.1.
+
 ## 0.2.1 (November 10, 2021)
   - added new class 'dataclient' for communication with dataproxy
   - added .translate_ib_contract
