@@ -1,3 +1,7 @@
+## 0.2.1 (November 10, 2021)
+  - added new class 'dataclient' for communication with dataproxy
+  - added .translate_ib_contract
+
 ## 0.2.0 (November 07, 2021)
   - added module Candlestick_Recognition
   - added instance_inspect method to 'scan' objects for contents of instance variables
