@@ -28,6 +28,7 @@ require_relative 'cotcube-helpers/reduce'
 require_relative 'cotcube-helpers/symbols'
 require_relative 'cotcube-helpers/init'
 require_relative 'cotcube-helpers/get_id_set'
+require_relative 'cotcube-helpers/ib_contracts'
 require_relative 'cotcube-helpers/recognition'
 require_relative 'cotcube-helpers/data_client'
 
