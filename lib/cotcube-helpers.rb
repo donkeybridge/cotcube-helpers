@@ -45,6 +45,7 @@ module Cotcube
                     :micros,
                     :get_id_set,
                     :get_ib_contract,
+                    :update_ib_contracts,
                     :translate_ib_contract,
                     :init
 

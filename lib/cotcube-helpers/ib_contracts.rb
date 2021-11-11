@@ -50,6 +50,20 @@ module Cotcube
         true
       end
     end
+
+    def translate_ib_contract(contract)
+      short = contract.split(" ").size == 1
+      sym_a = contract.split(short ? '' : ' ')
+      year  = sym_a.pop.to_i + (short ? 20 : 0)
+      if short and sym_a[-1].to_i > 0
+        year = year - 20 + sym_a.pop.to_i * 10
+      end
+      month = short ? sym_a.pop : LETTERS[sym_a.pop]
+      sym   = Cotcube::Helpers.symbols(internal: sym_a.join)[:symbol] rescue nil
+      sym ||= Cotcube::Helpers.micros(internal: sym_a.join)[:symbol] rescue nil
+      sym.nil? ? false : "#{sym}#{month}#{year}"
+    end
+
   end
 end
 
