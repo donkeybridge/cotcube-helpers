@@ -14,6 +14,7 @@ module Cotcube
         @exchange = channel.direct('dataproxy_commands', auto_delete: true)
         @requests = {} 
         @persistent = { depth: {}, realtimebars: {}, ticks: {} }
+        @response = nil
 
         setup_reply_queue
       end
@@ -35,6 +36,7 @@ module Cotcube
         requests[request_id] = { request: command, id: request_id }
 
         exchange.publish(command.to_json,
+                         content_type: 'application/json',
                          routing_key: 'dataproxy_commands',
                          correlation_id: request_id,
                          reply_to: reply_queue.name)
@@ -117,10 +119,12 @@ module Cotcube
         send_command(command)
       end
 
+      attr_accessor :response
+      attr_reader   :lock, :condition
+
       private
-      attr_accessor :call_id, :response, :lock, :condition, :connection,
-        :channel, :server_queue_name, :reply_queue, :exchange,
-        :requests, :persistent
+      attr_reader :call_id, :connection, :requests, :persistent,
+        :channel, :server_queue_name, :reply_queue, :exchange
 
 
       def setup_reply_queue
@@ -130,15 +134,23 @@ module Cotcube
         @reply_queue = channel.queue('', exclusive: true, auto_delete: true)
         @reply_queue.bind(channel.exchange('dataproxy_replies', auto_delete: true), routing_key: @reply_queue.name)
 
-        reply_queue.subscribe do |_delivery_info, properties, payload|
-          if requests[that.call_id].nil?
+        reply_queue.subscribe do |delivery_info, properties, payload|
+
+          __id__ = properties[:correlation_id] 
+
+          if __id__.nil?
+            puts "Received without __id__: #{delivery_info.map{|k,v| "#{k}\t#{v}"}.join("\n")
+                      }\n\n#{properties   .map{|k,v| "#{k}\t#{v}"}.join("\n")
+                      }\n\n#{JSON.parse(payload).map{|k,v| "#{k}\t#{v}"}.join("\n")}"
+
+          elsif requests[__id__].nil?
+            puts "Received non-matching response: \n\n#{_delivery_info}\n\n#{properties}\n\n#{payload}\n."
+          else 
             that.response = payload
 
             # sends the signal to continue the execution of #call
-            requests.delete(that.call_id)
+            requests.delete(__id__)
             that.lock.synchronize { that.condition.signal }
-          else
-            puts "Received non-matching response: \n\n#{_delivery_info}\n\n#{properties}\n\n#{payload}\n."
           end
         end
       end
