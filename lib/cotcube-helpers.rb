@@ -30,7 +30,6 @@ require_relative 'cotcube-helpers/init'
 require_relative 'cotcube-helpers/get_id_set'
 require_relative 'cotcube-helpers/ib_contracts'
 require_relative 'cotcube-helpers/recognition'
-require_relative 'cotcube-helpers/data_client'
 
 module Cotcube
   module Helpers
@@ -52,3 +51,5 @@ module Cotcube
     # please not that module_functions of source provided in private files must be published there
   end
 end
+
+require_relative 'cotcube-helpers/data_client'

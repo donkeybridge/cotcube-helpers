@@ -19,7 +19,7 @@ module Cotcube
       SECRETS = SECRETS_DEFAULT.merge(
         lambda {
           begin
-            YAML.safe_load(File.read("#{__FILE__.split('/')[..-4].join('/')}/secrets.yml"))
+            YAML.safe_load(File.read(Cotcube::Helpers.init[:secrets_file]))
           rescue StandardError
             {}
           end
@@ -33,18 +33,23 @@ module Cotcube
         @connection.start
 
         @commands  = connection.create_channel
-        @exchange  = commands.direct('dataproxy_commands', auto_delete: true)
+        @exchange  = commands.direct('dataproxy_commands')
         @requests  = {}
         @persistent = { depth: {}, realtimebars: {}, ticks: {} }
 
         setup_reply_queue
       end
 
-      def send_command(command, timeout: 5)
+      # command acts a synchronizer: it sends the command and waits for the response
+      #     otherwise times out --- the counterpart here is the subscription within 
+      #     setup_reply_queue
+      #
+      def command(command, timeout: 5)
         command = { command: command.to_s } unless command.is_a? Hash
         command[:timestamp] ||= (Time.now.to_f * 1000).to_i
         request_id = Digest::SHA256.hexdigest(command.to_json)[..6]
         requests[request_id] = { request: command, id: request_id }
+         
 
         exchange.publish(command.to_json,
                          routing_key: 'dataproxy_commands',
@@ -52,12 +57,21 @@ module Cotcube
                          reply_to: reply_queue.name)
 
         # wait for the signal to continue the execution
-        lock.synchronize do
-          condition.wait(lock, timeout)
+        #
+        requests[request_id][:lock] = Mutex.new
+        requests[request_id][:condition] = Condition.new
+
+        requests[request_id][:lock].synchronize do
+          requests[request_id][:condition].wait(requests[request_id][:lock], timeout)
         end
 
+        # if we reached timeout, we will return nil, just for explicity
+        response = requests[request_id][:response].presence || nil
+        requests.delete(request_id)
         response
       end
+
+      alias_method :send_command, :command
 
       def stop
         %i[depth ticks realtimebars].each do |type|
@@ -77,9 +91,28 @@ module Cotcube
       def get_historical(contract:, interval:, duration: nil, before: nil, rth_only: false, based_on: :trades)
         # rth.true? means data outside of rth is skipped
         rth_only = rth_only ? 1 : 0
-        default_durations = { sec1: '30_M', sec5:   '2_H', sec15:  '6_H', sec30: '12_H',
-                              min1: '1_D', min2:   '2_D', min5:   '5_D', min15:  '1_W',
-                              min30: '1_W', hour1:  '1_W', day1:   '1_Y' }
+
+        # interval most probably is given as ActiveSupport::Duration
+        if interval.is_a? ActiveSupport::Duration
+          interval = case interval
+                     when       1; :sec1 
+                     when       5; :sec5
+                     when      15; :sec15
+                     when      30; :sec30
+                     when      60; :min1
+                     when     120; :min2
+                     when     300; :min5
+                     when     900; :min15
+                     when    1800; :min30
+                     when    3600; :hour1
+                     when   86400; :day1
+                     else; interval
+                     end
+        end
+
+        default_durations = { sec1: '30_M',  sec5: '2_H', sec15: '6_H', sec30: '12_H',
+                              min1:  '1_D',  min2: '2_D',  min5: '5_D', min15:  '1_W',
+                              min30: '1_W', hour1: '1_W',  day1: '1_Y'                 }
 
         unless default_durations.keys.include? interval
           raise "Invalid interval '#{interval}', should be in '#{default_durations.keys}'."
@@ -149,11 +182,8 @@ module Cotcube
                   :commands, :server_queue_name, :reply_queue, :exchange
 
       def setup_reply_queue
-        @lock = Mutex.new
-        @condition = ConditionVariable.new
-        that = self
         @reply_queue = commands.queue('', exclusive: true, auto_delete: true)
-        @reply_queue.bind(commands.exchange('dataproxy_replies', auto_delete: true), routing_key: @reply_queue.name)
+        @reply_queue.bind(commands.exchange('dataproxy_replies'), routing_key: @reply_queue.name)
 
         reply_queue.subscribe do |delivery_info, properties, payload|
           __id__ = properties[:correlation_id]
@@ -164,13 +194,15 @@ module Cotcube
                                       }\n\n#{JSON.parse(payload).map { |k, v| "#{k}\t#{v}" }.join("\n")}"
 
           elsif requests[__id__].nil?
-            puts "Received non-matching response: \n\n#{delivery_info}\n\n#{properties}\n\n#{payload}\n."
+            puts "Received non-matching response, maybe previously timed out: \n\n#{delivery_info}\n\n#{properties}\n\n#{payload}\n."[..620].scan(/.{1,120}/).join(' '*30 + "\n")
           else
-            that.response = payload
-
-            # sends the signal to continue the execution of #call
-            requests.delete(__id__)
-            that.lock.synchronize { that.condition.signal }
+            # save the payload and send the signal to continue the execution of #command
+            # need to rescue the rare case, where lock and condition are destroyed right in parallel by timeout
+            begin 
+              requests[__id__][:response] == payload
+              requests[__id__][:lock].synchronize { requests[__id__][:condition].signal }
+            rescue nil
+            end
           end
         end
       end
