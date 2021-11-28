@@ -1,3 +1,6 @@
+## 0.2.2.3 (November 28, 2021)
+  - data_client: fixing troublesome output in .command
+
 ## 0.2.2.2 (November 28, 2021)
   - dataclient fixing = for false ==
   - solving merge conflicts
