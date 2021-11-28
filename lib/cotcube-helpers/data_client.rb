@@ -48,8 +48,12 @@ module Cotcube
         command = { command: command.to_s } unless command.is_a? Hash
         command[:timestamp] ||= (Time.now.to_f * 1000).to_i
         request_id = Digest::SHA256.hexdigest(command.to_json)[..6]
-        requests[request_id] = { request: command, id: request_id }
-         
+        requests[request_id] = {
+          request: command,
+          id: request_id,
+          lock: Mutex.new,
+          condition: ConditionVariable.new
+        }
 
         exchange.publish(command.to_json,
                          routing_key: 'dataproxy_commands',
@@ -58,15 +62,12 @@ module Cotcube
 
         # wait for the signal to continue the execution
         #
-        requests[request_id][:lock] = Mutex.new
-        requests[request_id][:condition] = Condition.new
-
         requests[request_id][:lock].synchronize do
           requests[request_id][:condition].wait(requests[request_id][:lock], timeout)
         end
 
         # if we reached timeout, we will return nil, just for explicity
-        response = requests[request_id][:response].presence || nil
+        response = requests[request_id][:response].dup
         requests.delete(request_id)
         response
       end
@@ -199,7 +200,8 @@ module Cotcube
             # save the payload and send the signal to continue the execution of #command
             # need to rescue the rare case, where lock and condition are destroyed right in parallel by timeout
             begin 
-              requests[__id__][:response] == payload
+              puts "Received result for #{__id__}"
+              requests[__id__][:response] = payload
               requests[__id__][:lock].synchronize { requests[__id__][:condition].signal }
             rescue nil
             end
