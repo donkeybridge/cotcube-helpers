@@ -1,3 +1,8 @@
+## 0.2.2.2 (November 28, 2021)
+  - dataclient fixing = for false ==
+  - solving merge conflicts
+  - Bump version to 0.2.2.
+
 ## 0.2.2.1 (November 28, 2021)
   - Bump version to 0.2.2.1
 
