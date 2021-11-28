@@ -36,7 +36,7 @@ module Cotcube
         @exchange  = commands.direct('dataproxy_commands')
         @requests  = {}
         @persistent = { depth: {}, realtimebars: {}, ticks: {} }
-
+        @debug     = false
         setup_reply_queue
       end
 
@@ -192,15 +192,15 @@ module Cotcube
           if __id__.nil?
             puts "Received without __id__: #{delivery_info.map       { |k, v| "#{k}\t#{v}" }.join("\n")
                                       }\n\n#{properties.map          { |k, v| "#{k}\t#{v}" }.join("\n")
-                                      }\n\n#{JSON.parse(payload).map { |k, v| "#{k}\t#{v}" }.join("\n")}"
+                                      }\n\n#{JSON.parse(payload).map { |k, v| "#{k}\t#{v}" }.join("\n")}" if @debug
 
           elsif requests[__id__].nil?
-            puts "Received non-matching response, maybe previously timed out: \n\n#{delivery_info}\n\n#{properties}\n\n#{payload}\n."[..620].scan(/.{1,120}/).join(' '*30 + "\n")
+            puts "Received non-matching response, maybe previously timed out: \n\n#{delivery_info}\n\n#{properties}\n\n#{payload}\n."[..620].scan(/.{1,120}/).join(' '*30 + "\n") if @debug
           else
             # save the payload and send the signal to continue the execution of #command
             # need to rescue the rare case, where lock and condition are destroyed right in parallel by timeout
             begin 
-              puts "Received result for #{__id__}"
+              puts "Received result for #{__id__}" if @debug
               requests[__id__][:response] = payload
               requests[__id__][:lock].synchronize { requests[__id__][:condition].signal }
             rescue nil
