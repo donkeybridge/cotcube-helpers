@@ -1,0 +1,103 @@
+#!/usr/bin/env ruby
+
+require 'bundler'
+Bundler.require
+require 'parallel'
+require_relative '../lib/cotcube-helpers'
+
+dc = Cotcube::Helpers::DataClient.new
+
+dc.start_persistent(type: :depth, contract: 'GCZ21') {|msg| p msg.size; p msg.map{|z| z[:size]}.reduce(&:+) }
+
+loop do
+ sleep 1
+end
+
+__END__
+  depthThread = Thread.new do 
+    begin
+      loop do
+        sleep 0.025 while depthQueue.empty?
+        while not depthQueue.empty?
+          msg = depthQueue.pop
+          if msg.data[:operation] == 2
+            data = [ (Time.now.to_f % 100000).round(3), :d, msg.data.values_at(:operation, :side, :position) ].flatten
+          else
+            data = [ (Time.now.to_f % 100000).round(3), :d, msg.data.values_at(:operation, :side, :position, :size, :price) ].flatten
+          end
+          puts "#{data}" if data[2]!=1 or data[4] == 0
+          next
+          writeQueue << data
+          side  = msg.data[:side]
+          price = msg.data[:price] 
+          size  = msg.data[:size]
+          pos   = msg.data[:position]
+          case msg.data[:operation]
+          when 0 # insert
+            orderbook[side].insert(pos, { price: price.to_f, size: size })
+          when 1 # update
+            orderbook[side][pos] = { price: price.to_f, size: size }
+          when 2 # remove
+            orderbook[side].delete_at(pos)
+          end
+          orderbook[1].shift while orderbook[1].size > DEPTH
+          orderbook[0].shift while orderbook[0].size > DEPTH
+          a = orderbook[0].size
+          a.times do |n|
+            s = a - 1
+            ask = orderbook[0][s-n]
+            next if ask.nil? 
+            allasks = orderbook[0][0..s-n].map{|x| x[:size]}.reduce(:+)
+            asksacc = orderbook[0][0..s-n].map{|x| x[:size] * x[:price]}.reduce(:+) / allasks        
+            puts "\t\t\t\t#{format % ask[:price]}  x #{'% 5d' % ask[:size]}\t#{'% 4d' % allasks}\t#{format % asksacc}"
+          end
+          allasks = orderbook[0].compact.map{|x| x[:size]}.reduce(:+)
+          asksacc = orderbook[0].compact.map{|x| x[:size] * x[:price]}.reduce(:+) / allasks unless orderbook[0].empty?
+          allbids = orderbook[1].compact.map{|x| x[:size]}.reduce(:+)
+          bidsacc = orderbook[1].compact.map{|x| x[:size] * x[:price]}.reduce(:+) / allbids unless orderbook[0].empty?
+          puts "#{(format % bidsacc) unless bidsacc.nil?}\t".light_red +
+            "#{('% 4d' % allbids) unless allbids.nil?}\t\t\t\t\t".light_red +
+            "#{"#{'% 5d' % allasks}" unless allasks.nil?}\t".light_red +
+            "#{"#{format % asksacc}" unless asksacc.nil?}".light_red 
+          b = orderbook[1].size
+          b.times do |n| 
+            bid = orderbook[1][n]
+            next if bid.nil?
+            allbids = orderbook[1][0..n].map{|x| x[:size]}.reduce(:+)
+            bidsacc = orderbook[1][0..n].map{|x| x[:size] * x[:price]}.reduce(:+) / allbids
+            puts "#{format % bidsacc}\t#{'% 4d' % allbids}\t#{'%5d' % bid[:size]} x #{format % bid[:price]}"
+          end
+          puts "="*50
+        end
+      end
+    rescue
+      puts "RESCUE in depthThread".light_red
+      puts "#{orderbook}"
+      raise
+    end
+  end
+
+  sleep 0.01 while Time.now.to_i % WRITE_INTERVAL != 0
+  loop do
+    t = Time.now.to_f 
+    unless writeQueue.empty?
+      data = [] 
+      data << writeQueue.pop while not writeQueue.empty?
+      CSV.open(OUTFILE, "a+") { |csv| data.each {|x| csv << x } }
+    end
+    begin
+      sleep WRITE_INTERVAL - (Time.now.to_f - t)
+    rescue 
+      sleep 3
+    end
+  end
+
+
+ensure
+  ib.send_message :CancelMarketDepth, id: ID
+  ib.send_message :CancelMarketData, id: ID
+  tickThread.kill
+  depthThread.kill
+end
+sleep 1
+puts "Done."

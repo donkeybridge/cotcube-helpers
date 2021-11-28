@@ -1,6 +1,5 @@
 ## 0.2.2.1 (November 28, 2021)
-  - Bump version to 0.2.2.
-  - Bump version to 0.2.2.
+  - Bump version to 0.2.2.1
 
 ## 0.2.2 (November 13, 2021)
   - some further improvements to DataClient
@@ -8,7 +7,6 @@
   - some fixes related to DataClient
 
 ## 0.2.1.1 (November 10, 2021)
-  - Bump version to 0.2.1.
   - Bump version to 0.2.1.
 
 ## 0.2.1 (November 10, 2021)
