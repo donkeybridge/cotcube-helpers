@@ -1,3 +1,6 @@
+## 0.2.2.4 (December 07, 2021)
+  - introduced cache_client as client to readcache
+
 ## 0.2.2.3 (November 28, 2021)
   - data_client: fixing troublesome output in .command
 
