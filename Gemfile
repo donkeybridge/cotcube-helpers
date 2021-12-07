@@ -6,3 +6,4 @@ source 'https://rubygems.org'
 gemspec
 gem 'parallel'
 gem 'bunny'
+gem 'httparty'

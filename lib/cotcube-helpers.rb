@@ -53,3 +53,4 @@ module Cotcube
 end
 
 require_relative 'cotcube-helpers/data_client'
+require_relative 'cotcube-helpers/cache_client'
