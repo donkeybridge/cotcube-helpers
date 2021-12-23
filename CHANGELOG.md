@@ -1,3 +1,10 @@
+## 0.2.2.5 (December 23, 2021)
+  - hash_ext: reworked keys_to_sym!
+  - minor changes
+  - deep_decode_datetime: added helper for conversion of timestrings in nested arrays and hashed
+  - cache_client: rewritten as class
+  - gemspec: raised activesupport to version 7
+
 ## 0.2.2.4 (December 07, 2021)
   - introduced cache_client as client to readcache
 
