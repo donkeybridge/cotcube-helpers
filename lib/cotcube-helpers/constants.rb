@@ -30,6 +30,8 @@ module Cotcube
 
 
     CHICAGO  = Time.find_zone('America/Chicago')
+    NEW_YORK = Time.find_zone('America/New_York')
+    BERLIN   = Time.find_zone('Europe/Berlin')
 
     DATE_FMT = '%Y-%m-%d'
 

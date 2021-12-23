@@ -34,7 +34,7 @@ module Cotcube
       end
 
       defaults = { 
-        data_path: '/var/cotcube/' + name,
+        data_path: '/var/cotcube/' + name.split('::').last.downcase,
       }
 
       config = defaults.merge(config)

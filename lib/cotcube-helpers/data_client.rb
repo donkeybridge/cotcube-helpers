@@ -44,7 +44,7 @@ module Cotcube
       #     otherwise times out --- the counterpart here is the subscription within 
       #     setup_reply_queue
       #
-      def command(command, timeout: 5)
+      def command(command, timeout: 10)
         command = { command: command.to_s } unless command.is_a? Hash
         command[:timestamp] ||= (Time.now.to_f * 1000).to_i
         request_id = Digest::SHA256.hexdigest(command.to_json)[..6]

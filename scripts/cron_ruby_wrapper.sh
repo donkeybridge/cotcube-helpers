@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export rubyenv=/home/pepe/.rvm/environments/default
+export rubyenv=/home/pepe/.rvm/environments/ruby-2.7.5
 
 . $rubyenv 
 cd /home/pepe/GEMS/${1}
@@ -10,6 +10,7 @@ ruby ${2} ${3} ${4} ${5} ${6}
 
  
 exit
+
 for testing run 
 env - `cat /home/pepe/bin/cron_ruby_wrapper.sh | tail -n 6` /bin/bash
 
