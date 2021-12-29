@@ -227,4 +227,4 @@ begin
   } 
 ensure
   client.stop
-  e,nd
+  end
