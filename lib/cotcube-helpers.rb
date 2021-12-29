@@ -53,5 +53,6 @@ module Cotcube
   end
 end
 
-require_relative 'cotcube-helpers/data_client'
-require_relative 'cotcube-helpers/cache_client'
+%w[ data cache order josch ].each do |part| 
+  require_relative "cotcube-helpers/#{part}_client"
+end
