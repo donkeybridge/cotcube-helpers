@@ -10,5 +10,9 @@ class String
     false
   end
 
+  def escape_regex
+    chars.map{|z| %w[ . | ( ) [ ] { } \ ^ $ + * ? ].include?(z) ? "\\#{z}" : z }.join
+  end
+
   alias is_valid_json? valid_json?
 end
