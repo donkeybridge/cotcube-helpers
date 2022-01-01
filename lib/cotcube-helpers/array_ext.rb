@@ -64,38 +64,51 @@ class Array
   def select_within(ranges:, attr: nil, &block)
     unless attr.nil? || first[attr]
       raise ArgumentError,
-            "At least first element of Array '#{first}' does not contain attr '#{attr}'!"
-  end
-  raise ArgumentError, 'Ranges should be an Array or, more precisely, respond_to :map' unless ranges.respond_to? :map
-  raise ArgumentError, 'Each range in :ranges should respond to .include!' unless ranges.map do |x|
-    x.respond_to? :include?
-  end.reduce(:&)
+        "At least first element of Array '#{first}' does not contain attr '#{attr}'!"
+    end
+    raise ArgumentError, 'Ranges should be an Array or, more precisely, respond_to :map' unless ranges.respond_to? :map
+    raise ArgumentError, 'Each range in :ranges should respond to .include!' unless ranges.map do |x|
+      x.respond_to? :include?
+    end.reduce(:&)
 
-  select do |el|
-    value = attr.nil? ? el : el[attr]
-    ranges.map do |range|
-      range.include?(block.nil? ? value : block.call(value))
-    end.reduce(:|)
-  end
-end
-
-def select_right_by(inclusive: false, exclusive: false, initial: [], &block)
-  # unless range.is_a? Range and
-  #       (range.begin.nil? or range.begin.is_a?(Integer)) and
-  #       (range.end.nil? or range.end.is_a?(Integer))
-  #  raise ArgumentError, ":range, if given, must be a range of ( nil|Integer..nil|Integer), got '#{range}'"
-  # end
-
-  raise ArgumentError, 'No block given.' unless block.is_a? Proc
-
-  inclusive = true unless exclusive
-  if inclusive && exclusive
-    raise ArgumentError,
-      "Either :inclusive or :exclusive must remain falsey, got '#{inclusive}' and '#{exclusive}'"
+    select do |el|
+      value = attr.nil? ? el : el[attr]
+      ranges.map do |range|
+        range.include?(block.nil? ? value : block.call(value))
+      end.reduce(:|)
+    end
   end
 
-  index = find_index { |obj| block.call(obj) }
+  def select_right_by(inclusive: false, exclusive: false, initial: [], &block)
+    # unless range.is_a? Range and
+    #       (range.begin.nil? or range.begin.is_a?(Integer)) and
+    #       (range.end.nil? or range.end.is_a?(Integer))
+    #  raise ArgumentError, ":range, if given, must be a range of ( nil|Integer..nil|Integer), got '#{range}'"
+    # end
 
-  self[((inclusive ? index : index + 1)..)]
-end
+    raise ArgumentError, 'No block given.' unless block.is_a? Proc
+
+    inclusive = true unless exclusive
+    if inclusive && exclusive
+      raise ArgumentError,
+        "Either :inclusive or :exclusive must remain falsey, got '#{inclusive}' and '#{exclusive}'"
+    end
+
+    index = find_index { |obj| block.call(obj) }
+
+    self[((inclusive ? index : index + 1)..)]
+  end
+
+  def elem_raises?(&block)
+    raise ArgumentError, "Must provide a block." unless block_given?
+    raise ArgumentError, "Block must have arity of 1." unless block.arity == 1
+    map do |elem|
+      begin
+        block.call(elem)
+        false
+      rescue
+        elem
+      end
+    end.reject{|z| z.is_a? FalseClass }.tap{|z| z.empty? ? (return false) : (return z)}
+  end
 end
