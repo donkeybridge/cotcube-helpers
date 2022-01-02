@@ -1,0 +1,4 @@
+#!/bin/sh
+GIT=`which git`
+${GIT} log --graph --pretty=format:'%N%h   %<(100)%s (%cr)  %d%n%b' --abbrev-commit | egrep '\\|/|\w+' | sed 's/^|/           /'
+

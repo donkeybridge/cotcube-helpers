@@ -1,0 +1,27 @@
+#!/bin/bash
+ROOT=${1:-$HOME/GEMS}
+
+
+check_dir () {
+  CYAN="\033[1;36m"
+  RESET="\033[0m"
+  VGREP="grep --color=always -v"
+  dir=$1
+  if [ -d "${dir}/.git" ]; then
+    echo -e ${CYAN}${dir}${RESET}
+    pushd ${dir} 2>&1 >/dev/null
+    git status  2>&1 | $VGREP 'no changes added to commit' |\
+                  $VGREP '^$' |\
+                  $VGREP 'to include in what will' |\
+                  $VGREP '(use "git ' |\
+                  $VGREP 'On branch main' |\
+                  $VGREP 'nothing to commit' |\
+                  $VGREP 'Your branch is up to date'
+    popd 2>&1 >/dev/null
+  fi
+}
+
+
+export -f check_dir
+
+find $ROOT -type d -maxdepth 1 2>/dev/null | xargs -n 1 bash -c  'check_dir "$1"' _
