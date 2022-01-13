@@ -22,9 +22,10 @@ module Cotcube
     def init(config_file_name: nil, 
              gem_name: nil,
              debug: false)
-      gem_name ||= self.ancestors.first.to_s
-      config_file_name = "#{gem_name.downcase.split('::').last}.yml"
-      config_file = config_path + "/#{config_file_name}"
+      gem_name        ||= self.ancestors.first.to_s
+      name              = gem_name.split('::').last.downcase
+      config_file_name  = "#{name}.yml"
+      config_file       = config_path + "/#{config_file_name}"
 
       if File.exist?(config_file)
         require 'yaml'
@@ -34,7 +35,8 @@ module Cotcube
       end
 
       defaults = { 
-        data_path: '/var/cotcube/' + name.split('::').last.downcase,
+        data_path: '/var/cotcube/' + name,
+        pid_file:  "/var/run/cotcube/#{name}.pid"
       }
 
       config = defaults.merge(config)

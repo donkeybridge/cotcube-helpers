@@ -15,6 +15,7 @@ check_dir () {
                   $VGREP 'to include in what will' |\
                   $VGREP '(use "git ' |\
                   $VGREP 'On branch main' |\
+                  $VGREP 'On branch master' |\
                   $VGREP 'nothing to commit' |\
                   $VGREP 'Your branch is up to date'
     popd 2>&1 >/dev/null
