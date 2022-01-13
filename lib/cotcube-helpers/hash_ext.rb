@@ -14,4 +14,30 @@ class Hash
     end
     self
   end
+
+  # a group_hash was created from an array by running group_by
+  # to reduce a group_hash, the given block is applied to each array of the hash
+  # if its not an array value, the block will auto-yield nil
+  def reduce_group(&block)
+    raise ArgumentError, 'No block given' unless block_given?
+    map do |key,value|
+      case value
+      when Array
+        [key, (block.call(value) rescue nil) ]
+      else
+        [key, nil]
+      end
+    end.to_h
+  end
+
+  def deep_dup
+    map do |k,v|
+      case v
+      when Hash, Array
+        [k, v.deep_dup]
+      else
+        [k, v.dup]
+      end
+    end.to_h
+  end
 end

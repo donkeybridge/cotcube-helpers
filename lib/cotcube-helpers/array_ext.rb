@@ -111,4 +111,16 @@ class Array
       end
     end.reject{|z| z.is_a? FalseClass }.tap{|z| z.empty? ? (return false) : (return z)}
   end
+
+  def deep_dup
+    map do |el|
+      case el
+      when Hash, Array
+        el.deep_dup
+      else
+        el.dup
+      end
+    end
+  end
+
 end
