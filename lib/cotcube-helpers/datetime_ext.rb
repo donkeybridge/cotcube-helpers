@@ -12,6 +12,14 @@ class DateTime
   end
 
   alias to_sssm to_seconds_since_sunday_morning
+
+  def seconds_until_next_minute(offset: 60)
+    offset = offset % 60
+    offset = 60 if offset.zero?
+    seconds = (self + offset - (self.to_f % 60).round(3) - self).to_f
+    seconds + (seconds.negative? ? 60 : 0)
+  end
+
 end
 
 class Date
@@ -21,12 +29,12 @@ class Date
     form = '%Y %W %w'
     build_range = lambda {|w|
       begin
-        ( DateTime.strptime("#{year} #{w} 1", form).to_date..
-          DateTime.strptime("#{year} #{w} 0", form).to_date)
+	( DateTime.strptime("#{year} #{w} 1", form).to_date..
+	 DateTime.strptime("#{year} #{w} 0", form).to_date)
       rescue
-        # beyond Dec 31st #strptime must be called with cw:0 to keep it working
-        ( DateTime.strptime("#{year} #{w} 1", form).to_date..
-          DateTime.strptime("#{year+1} 0  0", form).to_date)
+	# beyond Dec 31st #strptime must be called with cw:0 to keep it working
+	( DateTime.strptime("#{year} #{w} 1", form).to_date..
+	 DateTime.strptime("#{year+1} 0  0", form).to_date)
       end
     }
     case week
