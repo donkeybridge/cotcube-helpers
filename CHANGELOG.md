@@ -1,3 +1,13 @@
+## 0.2.4 (January 13, 2022)
+  - minor changes to init and bin/uncommitted
+  - datetime_ext: added #seconds_until_next_minute
+  - hash: added #deep_dup and #reduce_group; array: added #deep_dup
+  - bin/gitlog: pretty formatted git log
+  - string_ext: escape_regex escapes characters that otherwise have functional meanings in a regex
+  - array_ext: elem_raises? checks for each elem if raises with block, return raising elems or false
+  - Merge branch 'main' of github.com:donkeybridge/cotcube-helpers into main
+  - merging conflict
+
 ## 0.2.3 (December 30, 2021)
   - merging conflict
   - added bare josch_ and order_client s
