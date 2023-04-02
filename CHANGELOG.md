@@ -1,3 +1,6 @@
+## 0.2.5 (April 02, 2023)
+  - switching to FreeBSD base and ruby 3.2.2
+
 ## 0.2.4 (January 13, 2022)
   - minor changes to init and bin/uncommitted
   - datetime_ext: added #seconds_until_next_minute
