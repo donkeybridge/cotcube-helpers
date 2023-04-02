@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 
-export rubyenv=/home/pepe/.rvm/environments/ruby-2.7.5
+export rubyenv=/home/pepe/.rvm/environments/ruby-3.2.2
 
 . $rubyenv 
 cd /home/pepe/GEMS/${1}
-export LC_ALL="en_US.utf8"
+export LC_ALL="en_US.UTF-8"
 
 ruby ${2} ${3} ${4} ${5} ${6}
 
